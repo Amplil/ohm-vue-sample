@@ -3,26 +3,27 @@
 <head>
   <meta charset="UTF-8">
   <title>sample</title>
-  <script src="https://cdn.jsdelivr.net/npm/vue@2.5.17/dist/vue.js"></script>
+  <script src="https://unpkg.com/vue@next"></script>
 </head>
 <body>
 <div id="app">
-  <input type="checkbox" value="もも" v-model="fruits">
-  <label for="もも">もも</label>
-  <input type="checkbox" value="りんご" v-model="fruits">
-  <label for="りんご">りんご</label>
-  <input type="checkbox" value="みかん" v-model="fruits">
-  <label for="みかん">みかん</label>
-  <br>
+  <div v-for="fruit in fruits_list">
+    <input type="checkbox" v-bind:value="fruit" v-model="fruits">
+    <label v-bind:for="fruit">{{fruit}}</label>
+  </div>
+<br>
   <span>選択したくだもの: {{ fruits }}</span>
 </div>
 <script>
-  new Vue({
-    el: '#app',
-    data: {
+let app=Vue.createApp({
+  el: '#app',
+  data() {
+    return{
+      fruits_list:["もも","りんご","みかん"],
       fruits: []
     }
-  });
+  }
+}).mount('#app');
 </script>
 </body>
 </html>

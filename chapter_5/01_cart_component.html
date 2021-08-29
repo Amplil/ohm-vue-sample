@@ -75,7 +75,7 @@
               <img :src="item.image" alt="">
             </div>
             <div>{{ item.title }}</div>
-            <div>{{ item.price | formatCurrency }}</div>
+            <div>{{ item.price | formatCurrency}}</div>
             <input v-model="item.qty" type="number" min="1" />
             <button @click="addToCart(item)" class="button button-outline">カートに入れる</button>
           </div>
@@ -91,6 +91,11 @@
   </div>
 
   <script>
+    // カンマ区切り
+    Vue.filter('formatCurrency', function (value) {
+      return '¥' + String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+    });
+
     const products = [
       { id: 1, title: '商品1', price: 500, qty: 1, image: './images/cart/thumbnail_01.jpg' },
       { id: 2, title: '商品2', price: 1000, qty: 1, image: './images/cart/thumbnail_02.jpg' },
@@ -102,50 +107,7 @@
       { id: 8, title: '商品8', price: 20, qty: 1, image: './images/cart/thumbnail_08.jpg' },
     ];
 
-    // カンマ区切り
-    Vue.filter('formatCurrency', function (value) {
-      return '¥' + String(value).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
-    });
-
-    // カートコンポーネント
-    Vue.component('shopping-cart', {
-      template: `
-        <table class="table table-cart">
-          <tr>
-            <th class="" colspan="4"><i class="fas fa-shopping-cart"></i>ショッピングカート</th>
-          </tr>
-          <tr v-for="(item, index) in items">
-            <td>{{item.title}}</td>
-            <td>{{item.qty}}点</td>
-            <td class="">{{item.price | formatCurrency}}</td>
-            <td><a href="#" @click.stop.prevent="remove(index)"><i class="fas fa-times-circle"></i>削除</a></td>
-          </tr>
-          <tr>
-            <td colspan="2">合計</td>
-            <td colspan="2">{{total | formatCurrency}}</td>
-          </tr>
-        </table>
-        `,
-      props: ['items'],
-      computed: {
-        total: function () {
-          let total = 0;
-          this.items.forEach(item => {
-            total += (item.price * item.qty);
-          });
-          return total;
-        }
-      },
-
-      methods: {
-        // カートから削除
-        remove(index) {
-          this.items.splice(index, 1)
-        }
-      }
-    })
-
-    var vm = new Vue({
+    const vm =new Vue({
       el: '#app',
       data: {
         cartItems: [], //カート追加済みの商品
@@ -170,6 +132,43 @@
           }
 
           itemToAdd.qty = 1;
+        }
+      }
+    })
+
+    // カートコンポーネント
+    Vue.component('shopping-cart', {
+      template: `
+        <table class="table table-cart">
+          <tr>
+            <th class="" colspan="4"><i class="fas fa-shopping-cart"></i>ショッピングカート</th>
+          </tr>
+          <tr v-for="(item, index) in items">
+            <td>{{item.title}}</td>
+            <td>{{item.qty}}点</td>
+            <td class="">{{item.price | formatCurrency}}</td>
+            <td><a href="#" @click.stop.prevent="remove(index)"><i class="fas fa-times-circle"></i>削除</a></td>
+          </tr>
+          <tr>
+            <td colspan="2">合計</td>
+            <td colspan="2">{{total | formatCurrency}}</td>
+          </tr>
+        </table>
+        `,
+      props: ['items'],
+      computed: {
+        total: function () {
+          let total = 0;
+          this.items.forEach(item => {
+            total += (item.price * item.qty);
+          });
+          return total;
+        }
+      },
+      methods: {
+        // カートから削除
+        remove(index) {
+          this.items.splice(index, 1)
         }
       }
     })
